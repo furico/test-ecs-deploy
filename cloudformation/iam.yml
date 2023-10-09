@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: IAM resource template
+
+Resources:
+  # ========================================
+  # IAM User
+  # ========================================
+  GitHubActionsUser:
+    Type: AWS::IAM::User
+    Properties: 
+      UserName: github_actions
+      ManagedPolicyArns: 
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser
+        - arn:aws:iam::aws:policy/AmazonECS_FullAccess
+
+  # ========================================
+  # IAM Role
+  # ========================================
+  EcsTaskExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: ecs_task_execution
+      AssumeRolePolicyDocument: 
+        Version: 2012-10-17
+        Statement: 
+          - Effect: Allow
+            Principal: 
+              Service: 
+                - ecs-tasks.amazonaws.com
+            Action: 
+              - sts:AssumeRole
+      ManagedPolicyArns: 
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+        - arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess
